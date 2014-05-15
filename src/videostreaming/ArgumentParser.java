@@ -10,6 +10,7 @@ import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
+import videostreaming.common.*;
 
 
 public class ArgumentParser {
@@ -39,10 +40,11 @@ public class ArgumentParser {
 		
 		
 		if( remotePort >= 0){
-			if( hostname.isEmpty() ){
-				System.err.println("-remote 'remoteHost' must be provided");
-				System.exit(1);
-			}
+//			if( hostname.isEmpty() ){
+//				System.err.println("-remote 'remoteHost' must be provided");
+//				System.exit(1);
+//			}
+			//gcomo
 		}
 		
 		if(rate<100){
@@ -53,10 +55,10 @@ public class ArgumentParser {
 	
 	public ArgumentParser()
 	{
-		serverPort = 6262;
-		remotePort = 6262;
+		serverPort = Constants.PORT.getValue();
+		remotePort = Constants.PORT.getValue();
 		hostname = "";
-		rate = 100;
+		rate = Constants.RATE.getValue();
 	}
 
 	public int getServerPort() {

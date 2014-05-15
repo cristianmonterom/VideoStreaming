@@ -11,7 +11,8 @@ package videostreaming.common;
  * @author santiago
  */
 public enum Constants {
-   PORT(6262);
+   PORT(6262),
+   RATE(100);
    
    private int value;
    

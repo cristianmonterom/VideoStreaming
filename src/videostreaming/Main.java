@@ -1,4 +1,5 @@
 package videostreaming;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import javax.net.ssl.HostnameVerifier;
@@ -17,6 +18,9 @@ public class Main {
 	private static int serverPort;
 	private static int remotePort;
 	private static int rate;
+	
+	private static boolean local;
+	private static boolean ratelimit;
 	
 	public static void main (String[] args){
 		
@@ -46,19 +50,29 @@ public class Main {
 /**
  * in the next loop, the system acting as a server side must delete the clients once it was disconnected
  */
-		
+		boolean handover = false;
 		while(true){
 			connAsServer.establishConnection();
 			if(clientList.size()<3){		//here the prog must accept connections while clients <3 (improve to handle many more
 				Client aNewClient = new Client(connAsServer.getInput(), connAsServer.getOutput());
 				clientList.add(aNewClient);
-				StatusResponse statusMsgResp = new StatusResponse(true, clientList.size(), true, false);
+				handover = clientList.size()>3?true:false;
+				StatusResponse statusMsgResp = new StatusResponse(local, clientList.size(), ratelimit,handover);
 				Thread client = new Thread(new ClientThread(aNewClient,statusMsgResp)); 
 				client.start();
 
 				System.out.println("cuantos="+clientList.size());
 			}else{
+				handover = clientList.size()>=3?true:false;
+				StatusResponse statusMsgResp = new StatusResponse(local, clientList.size(), ratelimit, handover);
+				try{
+					connAsServer.getOutput().writeUTF(statusMsgResp.ToJSON());
+				}catch(IOException ex){
+					ex.printStackTrace();
+				}
+				System.err.println("From Server"+statusMsgResp.ToJSON());
 				System.err.println("");
+				connAsServer.
 			}
 			
 		}
@@ -74,6 +88,10 @@ public class Main {
 		serverPort = parser.getServerPort();
 		remotePort = parser.getRemotePort();
 		rate = parser.getRate();
+		
+		
+		local = !hostname.equals("")?false:true;
+		ratelimit = rate>100?true:false;
 		
 		System.out.println("Parameters:");
 		System.out.println("hostname="+hostname);
