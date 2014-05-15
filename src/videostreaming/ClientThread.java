@@ -1,6 +1,8 @@
 package videostreaming;
 import java.io.IOException;
 
+import videostreaming.messaging.StatusResponse;
+
 
 public class ClientThread implements Runnable{
 	Client client;

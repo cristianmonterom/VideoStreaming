@@ -3,6 +3,7 @@ package videostreaming.messaging;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
+import videostreaming.common.CommonFunctions;
 import videostreaming.common.ProtocolMessages;
 import videostreaming.common.StreamingMode;
 
@@ -21,8 +22,8 @@ public class Messages {
 		obj.put("response", ProtocolMessages.Status.getValue());
 		obj.put("streaming", _streaming.toString().toLowerCase());
 		obj.put("clients", clientList);
-		obj.put("ratelimiting", convertBoolean(_isRateLimited));
-		obj.put("handover", convertBoolean(_isHandOver));
+		obj.put("ratelimiting", CommonFunctions.convertBoolean(_isRateLimited));
+		obj.put("handover", CommonFunctions.convertBoolean(_isHandOver));
 
 		return obj.toJSONString() + endMessage;
 	}
@@ -86,7 +87,5 @@ public class Messages {
 		return obj.toJSONString() + endMessage;
 	}
 	
-	private static String convertBoolean(boolean _param) {
-		return _param ? "yes" : "no";
-	}
+
 }

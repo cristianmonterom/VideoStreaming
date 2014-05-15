@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import videostreaming.common.Constants;
+
 public class ServerConnection extends Connection{
 	
 	

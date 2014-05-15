@@ -1,4 +1,4 @@
-package videostreaming;
+package videostreaming.common;
 
 /*
  * To change this template, choose Tools | Templates

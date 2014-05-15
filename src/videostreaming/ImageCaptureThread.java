@@ -3,6 +3,9 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
+import videostreaming.messaging.RequestResponse;
+import videostreaming.messaging.StatusResponse;
+
 
 public class ImageCaptureThread implements Runnable {
 	
