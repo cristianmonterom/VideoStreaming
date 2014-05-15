@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import javax.net.ssl.HostnameVerifier;
 
 import videostreaming.messaging.Messages;
+import videostreaming.messaging.StatusResponse;
 
 import org.kohsuke.args4j.Option;
 

@@ -3,7 +3,7 @@ package videostreaming.common;
 public enum ProtocolMessages {
 	Status("status"), StartSream("startstream"), StartingStream(
 			"startingstream"), StopStream("stopstream"), StoppedStream(
-			"stoppedstream"), Image("image"), Overloaded("overloaded");
+			"stoppedstream"), Image("image"), Overloaded("overloaded"), Request("request"), Response("response");
 
 	private String value;
 
