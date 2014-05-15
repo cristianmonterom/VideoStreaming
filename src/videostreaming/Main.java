@@ -72,7 +72,6 @@ public class Main {
 				}
 				System.err.println("From Server"+statusMsgResp.ToJSON());
 				System.err.println("");
-				connAsServer.
 			}
 			
 		}
