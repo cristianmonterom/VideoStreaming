@@ -26,7 +26,6 @@ public class Main {
 		 * parsing arguments
 		 */
 		setArgumentsFromCommandLine(args);
-		System.out.println("todo bien con los parametros");
 				
 		if(hostname.equals("jeje"))		//if streaming == remote then connect to a server
 		{
@@ -75,7 +74,7 @@ public class Main {
 		remotePort = parser.getRemotePort();
 		rate = parser.getRate();
 		
-		
+		System.out.println("Parameters:");
 		System.out.println("hostname="+hostname);
 		System.out.println("serverPort="+serverPort);
 		System.out.println("remoteport="+remotePort);
