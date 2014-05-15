@@ -38,15 +38,15 @@ public class ArgumentParser {
 	    }
 		
 		
-		if(!hostname.isEmpty()){
-			if(remotePort == 0){
-				System.err.println("-rport 'remotePort' must be provided");
+		if( remotePort >= 0){
+			if( hostname.isEmpty() ){
+				System.err.println("-remote 'remoteHost' must be provided");
 				System.exit(1);
 			}
 		}
 		
 		if(rate<100){
-			System.err.println("Rate too low. Using default -rate 100");
+			System.err.println("Rate limit is too small. Using default rate 100");
 			rate = 100;
 		}
 	}
@@ -54,6 +54,7 @@ public class ArgumentParser {
 	public ArgumentParser()
 	{
 		serverPort = 6262;
+		remotePort = 6262;
 		hostname = "";
 		rate = 100;
 	}
