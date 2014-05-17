@@ -1,7 +1,8 @@
 package videostreaming;
 import java.io.IOException;
 
-import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.*;
+import videostreaming.common.*;
 
 
 public class ClientThread implements Runnable{
@@ -18,6 +19,7 @@ public class ClientThread implements Runnable{
 	public void run()
 	{
 		sendStatusResponse();
+		receiveRequest();
 	}
 	
 	private void sendStatusResponse(){
@@ -28,7 +30,25 @@ public class ClientThread implements Runnable{
 			ex.printStackTrace();
 		}
 		
-		System.err.println("mandado desde el thread= "+str);
+		System.err.println("send from thread as server= "+str);
+	}
+	
+	private void  receiveRequest()
+	{
+		StartStreamRequest resquestRcvd = new StartStreamRequest();
+		String rcvdReqStr = "";
+		
+		try{
+			rcvdReqStr = client.getInput().readUTF();
+		}
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
+		
+		resquestRcvd.FromJSON(rcvdReqStr);
+		
+		System.err.println("Req rcvd" + resquestRcvd.ToJSON());
+		
 	}
 
 }
