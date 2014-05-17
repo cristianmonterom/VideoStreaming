@@ -39,13 +39,20 @@ public class ArgumentParser {
 	    }
 		
 		
-		if( !hostname.isEmpty() ){
-			
-		}
-		else if( remotePort > 0 ){
-			if( hostname.isEmpty() ){
+		if( hostname.isEmpty() ){
+			if( remotePort == 0 ){
+				
+			}else if(remotePort > 0){
 				System.err.println("-remote 'remoteHost' must be provided");
 				System.exit(1);
+			}else{
+				System.err.println("--------Invalid arguments---------");
+		    	System.exit(1);
+			}
+			
+		}else{
+			if(remotePort == 0){
+				remotePort = Constants.PORT.getValue();
 			}
 		}
 		
@@ -58,7 +65,7 @@ public class ArgumentParser {
 	public ArgumentParser()
 	{
 		serverPort = Constants.PORT.getValue();
-		remotePort = Constants.PORT.getValue();
+		remotePort = 0;
 		hostname = "";
 		rate = Constants.RATE.getValue();
 	}
