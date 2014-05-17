@@ -10,7 +10,7 @@ public class ImageCaptureThread implements Runnable {
 	
 	private DataOutputStream output;
 	private DataInputStream	input;
-	
+	private byte[] rawimage;
 	
 	public ImageCaptureThread( DataInputStream dIS, DataOutputStream dOS)
 	{
@@ -21,7 +21,7 @@ public class ImageCaptureThread implements Runnable {
 	
 	public void run() {
 		
-		System.err.println("Should receive messages to int and start streaming");
+		System.err.println("Should receive messages to init and start streaming");
 		//read response message from server
 		receiveResponse();
 		sendStartStreamRequest();
@@ -62,6 +62,28 @@ public class ImageCaptureThread implements Runnable {
 		}
 		
 		System.err.println("send as client"+request.ToJSON());
+	}
+	
+	private void receiveImages()
+	{
+		String streamStr = null;
+		Stream streamMsgFromServer;
+		String strImg;
+		
+		try{
+			streamStr = input.readUTF();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
+		
+		streamMsgFromServer = new Stream();
+		streamMsgFromServer.FromJSON(streamStr);
+		streamMsgFromServer.
+		
+		//imgStreamStr.getBytes();
+		
+		
+		
 	}
 }
 
