@@ -8,8 +8,9 @@ public class Stream extends RequestResponse {
 	String data;
 	boolean lastMessage = true;
 
-	public Stream(boolean _lastMessage) {
+	public Stream(boolean _lastMessage, String strDataToSend) {
 		this.lastMessage = _lastMessage;
+		this.data = strDataToSend;
 	}
 
 	public Stream() {

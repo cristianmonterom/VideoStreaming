@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import javax.net.ssl.HostnameVerifier;
 
-import videostreaming.messaging.Messages;
-import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.*;
+import videostreaming.common.*;
 
 import org.kohsuke.args4j.Option;
 
@@ -21,6 +21,8 @@ public class Main {
 	
 	private static boolean local;
 	private static boolean ratelimit;
+	
+	private static byte[] image;
 	
 	public static void main (String[] args){
 		
@@ -45,6 +47,7 @@ public class Main {
 			//TODO: obtaing images locally
 		}
 		
+		
 
 
 /**
@@ -53,17 +56,17 @@ public class Main {
 		boolean handover = false;
 		while(true){
 			connAsServer.establishConnection();
-			if(clientList.size()<3){		//here the prog must accept connections while clients <3 (improve to handle many more
-				Client aNewClient = new Client(connAsServer.getInput(), connAsServer.getOutput());
+			if(clientList.size()<Constants.MAX_CLIENTS.getValue()){		//here the prog must accept connections while clients <3 (improve to handle many more
+				Client aNewClient = new Client(connAsServer.getInput(), connAsServer.getOutput(),image);
 				clientList.add(aNewClient);
-				handover = clientList.size()>3?true:false;
+				handover = clientList.size()>Constants.MAX_CLIENTS.getValue()?true:false;
 				StatusResponse statusMsgResp = new StatusResponse(local, clientList.size(), ratelimit,handover);
 				Thread client = new Thread(new ClientThread(aNewClient,statusMsgResp)); 
 				client.start();
 
 				System.out.println("cuantos="+clientList.size());
 			}else{
-				handover = clientList.size()>=3?true:false;
+				handover = clientList.size()>=Constants.MAX_CLIENTS.getValue()?true:false;
 				StatusResponse statusMsgResp = new StatusResponse(local, clientList.size(), ratelimit, handover);
 				try{
 					connAsServer.getOutput().writeUTF(statusMsgResp.ToJSON());
