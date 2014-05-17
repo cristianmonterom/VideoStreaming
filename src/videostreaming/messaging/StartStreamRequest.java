@@ -43,8 +43,7 @@ public class StartStreamRequest extends RequestResponse {
 		try {
 			obj = (JSONObject) parser.parse(_response);
 		} catch (org.json.simple.parser.ParseException e) {
-			e.printStackTrace();
-			System.exit(-1);
+			System.err.println("StartStreamRequest: Message is not valid");
 		}		
 	}
 

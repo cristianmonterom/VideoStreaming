@@ -53,13 +53,17 @@ public class StatusResponse extends RequestResponse {
 		try {
 			obj = (JSONObject) parser.parse(_response);
 		} catch (org.json.simple.parser.ParseException e) {
-			e.printStackTrace();
-			System.exit(-1);
+			System.err.println("StatusResponse: Message is not valid");
 		}
-		this.streaming = (String) obj.get("streaming");
-		this.totalClients = (Integer.parseInt(obj.get("clients").toString()));
-		this.rateLimit = (String) obj.get("ratelimiting");
-		this.handover = (String) obj.get("handover");
+		
+		try {
+			this.streaming = (String) obj.get("streaming");
+			this.totalClients = (Integer.parseInt(obj.get("clients").toString()));
+			this.rateLimit = (String) obj.get("ratelimiting");
+			this.handover = (String) obj.get("handover");
+		} catch (Exception e) {
+			System.err.println("StatusResponse: Message format is not valid");
+		}
 	}
 
 }

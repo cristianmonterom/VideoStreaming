@@ -57,9 +57,16 @@ public class OverloadResponse extends RequestResponse {
 		try {
 			obj = (JSONObject) parser.parse(_response);
 		} catch (org.json.simple.parser.ParseException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}		
+			System.err.println("Error: Message is not valid");
+		}
+		
+		try {
+			this.clients = (String[]) obj.get("clients");
+			this.port = (Integer.parseInt(obj.get("port").toString()));
+			this.server = (String) obj.get("server");
+		} catch (Exception e) {
+			System.err.println("Error: Message format is not valid");
+		}
 	}
 
 }
