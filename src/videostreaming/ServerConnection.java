@@ -14,7 +14,7 @@ public class ServerConnection extends Connection{
 	public ServerConnection()
 	{
 		try{
-	    	server = new ServerSocket(Constants.PORT.getValue()+4);
+	    	server = new ServerSocket(Constants.PORT.getValue());
 	    	socket = new Socket();
 		}
 		catch(IOException connEx)

@@ -39,12 +39,14 @@ public class ArgumentParser {
 	    }
 		
 		
-		if( remotePort >= 0){
-//			if( hostname.isEmpty() ){
-//				System.err.println("-remote 'remoteHost' must be provided");
-//				System.exit(1);
-//			}
-			//gcomo
+		if( !hostname.isEmpty() ){
+			
+		}
+		else if( remotePort > 0 ){
+			if( hostname.isEmpty() ){
+				System.err.println("-remote 'remoteHost' must be provided");
+				System.exit(1);
+			}
 		}
 		
 		if(rate<100){
