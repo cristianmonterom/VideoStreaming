@@ -3,8 +3,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
-import videostreaming.messaging.RequestResponse;
-import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.*;
 
 
 public class ImageCaptureThread implements Runnable {
@@ -22,9 +21,10 @@ public class ImageCaptureThread implements Runnable {
 	
 	public void run() {
 		
-		System.err.println("Aqui DEBE recibir las imagenes");
+		System.err.println("Should receive messages to int and start streaming");
 		//read response message from server
 		receiveResponse();
+		sendStartStreamRequest();
 		
 	}
 	
@@ -44,8 +44,24 @@ public class ImageCaptureThread implements Runnable {
 		rcvdRespFromServer = new StatusResponse();
 		rcvdRespFromServer.FromJSON(strFromServer);
 //		
-		System.out.println("eh !!!:  "+rcvdRespFromServer.ToJSON());
+		System.out.println("receiving as client !!!:  "+rcvdRespFromServer.ToJSON());
 		
+	}
+	
+	private void sendStartStreamRequest()
+	{
+		StartStreamRequest request = new StartStreamRequest();
+		request = new StartStreamRequest();
+		
+		try{
+//			output.writeUTF(request.ToJSON());
+			output.writeUTF("hola");
+		}
+		catch(IOException ex){
+			ex.printStackTrace();
+		}
+		
+		System.err.println("send as client"+request.ToJSON());
 	}
 }
 
