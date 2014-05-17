@@ -56,11 +56,10 @@ public class StatusResponse extends RequestResponse {
 			e.printStackTrace();
 			System.exit(-1);
 		}
-//		this.streaming = (String) obj.get("streaming");
-//		this.totalClients = (Integer.parseInt(obj.get("clients").toString()));
-//		this.rateLimit = Boolean.parseBoolean(obj.get("ratelimiting")
-//				.toString());
-//		this.handover = Boolean.parseBoolean(obj.get("handover").toString());
+		this.streaming = (String) obj.get("streaming");
+		this.totalClients = (Integer.parseInt(obj.get("clients").toString()));
+		this.rateLimit = (String) obj.get("ratelimiting");
+		this.handover = (String) obj.get("handover");
 	}
 
 }
