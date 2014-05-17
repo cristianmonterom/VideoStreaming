@@ -15,4 +15,8 @@ public final class CommonFunctions {
 	public static boolean convertString(String _param) {
 		return _param.equals("yes");
 	}
+	
+	public static boolean isPortValid(int _portNumber) {
+		return (_portNumber > 0 && _portNumber < 65535);
+	}
 }
