@@ -78,7 +78,7 @@ public class ImageCaptureThread implements Runnable {
 		
 		streamMsgFromServer = new Stream();
 		streamMsgFromServer.FromJSON(streamStr);
-		streamMsgFromServer.
+		//streamMsgFromServer.
 		
 		//imgStreamStr.getBytes();
 		

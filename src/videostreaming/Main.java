@@ -44,7 +44,8 @@ public class Main {
 			
 		}
 		else{
-			//TODO: obtaing images locally
+			Thread video = new Thread(new VideoCapture());
+			video.start();
 		}
 		
 		
