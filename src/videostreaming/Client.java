@@ -7,13 +7,13 @@ import java.io.DataOutputStream;
 public class Client {
 	private DataOutputStream output;
 	private DataInputStream	input;
-	private byte[] rawImage;
+	private CurrentImage image;
 	
-	public Client(DataInputStream dIs, DataOutputStream dOs, byte[] image)
+	public Client(DataInputStream dIs, DataOutputStream dOs,CurrentImage image)
 	{
 		input = dIs;
 		output = dOs;
-		rawImage = image;
+		this.image = image;
 		System.err.println("cliente numero loquesea");
 	}
 
@@ -25,8 +25,8 @@ public class Client {
 		return input;
 	}
 
-	public byte[] getRawImage() {
-		return rawImage;
+	public CurrentImage getImage() {
+		return image;
 	}
 
 }

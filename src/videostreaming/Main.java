@@ -22,11 +22,12 @@ public class Main {
 	private static boolean local;
 	private static boolean ratelimit;
 	
-	private static byte[] image;
+	
 	
 	public static void main (String[] args){
 		
 		ServerConnection connAsServer = new ServerConnection();		//act as server
+		CurrentImage currentImage = new CurrentImage();
 
 		Messages objMessages;
 		/**
@@ -44,7 +45,7 @@ public class Main {
 			
 		}
 		else{
-			Thread video = new Thread(new VideoCapture());
+			Thread video = new Thread(new VideoCapture(currentImage));
 			video.start();
 		}
 		
@@ -58,7 +59,7 @@ public class Main {
 		while(true){
 			connAsServer.establishConnection();
 			if(clientList.size()<Constants.MAX_CLIENTS.getValue()){		//here the prog must accept connections while clients <3 (improve to handle many more
-				Client aNewClient = new Client(connAsServer.getInput(), connAsServer.getOutput(),image);
+				Client aNewClient = new Client(connAsServer.getInput(), connAsServer.getOutput(),currentImage);
 				clientList.add(aNewClient);
 				handover = clientList.size()>Constants.MAX_CLIENTS.getValue()?true:false;
 				StatusResponse statusMsgResp = new StatusResponse(local, clientList.size(), ratelimit,handover);

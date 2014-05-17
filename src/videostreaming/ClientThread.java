@@ -21,6 +21,11 @@ public class ClientThread implements Runnable{
 	{
 		sendStatusResponse();
 		receiveRequest();
+		try{
+			Thread.sleep(800);
+		}catch(InterruptedException ex){
+			ex.printStackTrace();
+		}
 		sendImage();
 	}
 	
@@ -55,36 +60,51 @@ public class ClientThread implements Runnable{
 	private void sendImage()
 	{
 		byte[] rawImage;
-		byte[] partialImage;
+		String partialImage;
 		int start=0;
 		int end=0;
 		int remaining_data;
 		boolean last_message = false;
 		
 		Stream streamMsg = null;
+		String str = null;
 		
-		rawImage = client.getRawImage();
+		rawImage = client.getImage().getImageToDisplay();
+		
+		try{
+			str = new String(rawImage, "UTF-8");
+		}catch(Exception ex){
+			ex.printStackTrace();
+		}
 		
 		start = 0;
-		remaining_data= rawImage.length;
+		remaining_data= str.length();
 		
-		if(rawImage.length > Constants.IMAGE_DATA_SIZE.getValue()){
+		if(str.length() > Constants.IMAGE_DATA_SIZE.getValue()){
 			end = Constants.IMAGE_DATA_SIZE.getValue();
 		}else{
-			end = rawImage.length;
+			end = str.length();
 			last_message = true;
 		}
 		
+		System.out.println(str);
+		
+		System.out.println("disque llega la imagen");
+		
 		//Process images to split and send multiple messages
 		do{
-			partialImage = Arrays.copyOfRange(rawImage, start, end);
-			partialImage.toString();
-			streamMsg = new Stream(last_message,partialImage.toString());		//check true or false
+			partialImage = str.substring(start, end);
+//			partialImage = Arrays.copyOfRange(rawImage, start, end);
+//			partialImage.toString();
+			System.out.println(partialImage);
+			
+			streamMsg = new Stream(last_message,partialImage);		//check true or false
 			try{
 				client.getOutput().writeUTF(streamMsg.ToJSON());
 			}catch(IOException ex){
 				ex.printStackTrace();
 			}
+			System.err.println(streamMsg.ToJSON());
 			
 			start = end +1;
 			remaining_data -= Constants.IMAGE_DATA_SIZE.getValue();
