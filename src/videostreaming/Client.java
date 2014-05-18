@@ -14,7 +14,6 @@ public class Client {
 		input = dIs;
 		output = dOs;
 		this.image = image;
-		System.err.println("cliente numero loquesea");
 	}
 
 	public DataOutputStream getOutput() {

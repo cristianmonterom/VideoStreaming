@@ -5,12 +5,12 @@ import org.json.simple.JSONObject;
 import videostreaming.common.ProtocolMessages;
 
 public class Stream extends RequestResponse {
-	String data;
+	String imageData;
 	boolean lastMessage = true;
 
 	public Stream(boolean _lastMessage, String strDataToSend) {
 		this.lastMessage = _lastMessage;
-		this.data = strDataToSend;
+		this.imageData = strDataToSend;
 	}
 
 	public Stream() {
@@ -33,9 +33,9 @@ public class Stream extends RequestResponse {
 		JSONObject obj = new JSONObject();
 		obj.put(Type(), Action());
 		if (!this.lastMessage) {
-			obj.put("data", this.data);
+			obj.put("data", this.imageData);
 		} else {
-			obj.put("data", this.data + endMessage);
+			obj.put("data", this.imageData + endMessage);
 		}
 		return obj.toJSONString();
 	}
@@ -51,11 +51,15 @@ public class Stream extends RequestResponse {
 		}
 
 		try {
-			this.data = (String) obj.get("data");
+			this.imageData = (String) obj.get("data");
 		} catch (Exception e) {
 			System.err.println("StatusResponse: Message format is not valid");
 		}
 
+	}
+
+	public String getImageData() {
+		return imageData;
 	}
 
 }

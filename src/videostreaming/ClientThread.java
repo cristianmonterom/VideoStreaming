@@ -26,7 +26,11 @@ public class ClientThread implements Runnable{
 		}catch(InterruptedException ex){
 			ex.printStackTrace();
 		}
-		sendImage();
+		
+		// While condition execute following
+		do{
+			sendImage();
+		}while(true);
 	}
 	
 	private void sendStatusResponse(){
@@ -37,7 +41,7 @@ public class ClientThread implements Runnable{
 			ex.printStackTrace();
 		}
 		
-		System.err.println("send from thread as server= "+str);
+//		System.err.println("send from thread as server= "+str);
 	}
 	
 	private void  receiveRequest()
@@ -54,7 +58,7 @@ public class ClientThread implements Runnable{
 		
 		resquestRcvd.FromJSON(rcvdReqStr);
 		
-		System.err.println("Req rcvd" + resquestRcvd.ToJSON());
+//		System.err.println("Req rcvd" + resquestRcvd.ToJSON());
 	}
 	
 	private void sendImage()
@@ -87,26 +91,26 @@ public class ClientThread implements Runnable{
 			last_message = true;
 		}
 		
-		System.out.println(str);
+//		System.out.println(str);
 		
-		System.out.println("disque llega la imagen");
+//		System.out.println("disque llega la imagen");
 		
 		//Process images to split and send multiple messages
 		do{
 			partialImage = str.substring(start, end);
 //			partialImage = Arrays.copyOfRange(rawImage, start, end);
 //			partialImage.toString();
-			System.out.println(partialImage);
+//			System.out.println(partialImage);
 			
-			streamMsg = new Stream(last_message,partialImage);		//check true or false
+			streamMsg = new Stream(last_message,partialImage);
 			try{
 				client.getOutput().writeUTF(streamMsg.ToJSON());
 			}catch(IOException ex){
 				ex.printStackTrace();
 			}
-			System.err.println(streamMsg.ToJSON());
+//			System.out.println(streamMsg.ToJSON());
 			
-			start = end +1;
+			start = end;
 			remaining_data -= Constants.IMAGE_DATA_SIZE.getValue();
 			if(remaining_data<=0) break;		//no more data
 			

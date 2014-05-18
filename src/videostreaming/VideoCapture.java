@@ -67,7 +67,7 @@ public class VideoCapture implements Runnable {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			System.err.println(str);
+//			System.err.println(str);
 
 			myViewer.ViewerInput(raw_image);
 			frame.repaint();

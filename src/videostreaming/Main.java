@@ -29,7 +29,6 @@ public class Main {
 		ServerConnection connAsServer = new ServerConnection();		//act as server
 		CurrentImage currentImage = new CurrentImage();
 
-		Messages objMessages;
 		/**
 		 * parsing arguments
 		 */
