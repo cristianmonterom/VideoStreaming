@@ -34,9 +34,9 @@ public class Main {
 		 */
 		setArgumentsFromCommandLine(args);
 				
-		if(hostname.equals("jeje"))		//if streaming == remote then connect to a server
+		if(local == false)		//if streaming == remote then connect to a server
 		{
-			ClientConnection connAsClient = new ClientConnection("localhost");
+			ClientConnection connAsClient = new ClientConnection(hostname);
 			System.err.println("no se si llega aqui");
 			connAsClient.establishConnection();
 			Thread test = new Thread(new ImageCaptureThread(connAsClient.getInput(),connAsClient.getOutput()));
