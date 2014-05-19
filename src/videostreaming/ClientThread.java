@@ -1,129 +1,71 @@
 package videostreaming;
+
 import java.io.IOException;
-import java.util.Arrays;
 
-import videostreaming.messaging.*;
-import videostreaming.common.*;
+import videostreaming.messaging.StartStreamRequest;
+import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.Stream;
 
-
-public class ClientThread implements Runnable{
+public class ClientThread implements Runnable {
 	Client client;
 	StatusResponse response;
-	
+
 	public ClientThread(Client client, StatusResponse status) {
-		// TODO Auto-generated constructor stub
 		this.client = client;
 		this.response = status;
 	}
-	
-	
-	public void run()
-	{
+
+	public void run() {
 		sendStatusResponse();
 		receiveRequest();
-		try{
+		try {
 			Thread.sleep(800);
-		}catch(InterruptedException ex){
+		} catch (InterruptedException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		// While condition execute following
-		do{
+		do {
 			sendImage();
-		}while(true);
+		} while (true);
+
 	}
-	
-	private void sendStatusResponse(){
+
+	private void sendStatusResponse() {
 		String str = response.ToJSON();
-		try{
-			client.getOutput().writeUTF(str);
-		}catch(IOException ex){
-			ex.printStackTrace();
-		}
-		
-//		System.err.println("send from thread as server= "+str);
+		client.getOut().println(str);
+		System.err.println("mensaje sttus response enviado ok" + str);
 	}
-	
-	private void  receiveRequest()
-	{
+
+	private void receiveRequest() {
 		StartStreamRequest resquestRcvd = new StartStreamRequest();
 		String rcvdReqStr = "";
-		
-		try{
-			rcvdReqStr = client.getInput().readUTF();
-		}
-		catch(IOException ex){
+
+		try {
+			rcvdReqStr = client.getIn().readLine();
+		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		
+
 		resquestRcvd.FromJSON(rcvdReqStr);
-		
-//		System.err.println("Req rcvd" + resquestRcvd.ToJSON());
 	}
-	
-	private void sendImage()
-	{
+
+	private void sendImage() {
 		byte[] rawImage;
-		String partialImage;
-		int start=0;
-		int end=0;
-		int remaining_data;
-		boolean last_message = false;
-		
+
 		Stream streamMsg = null;
 		String str = null;
-		
+
 		rawImage = client.getImage().getImageToDisplay();
-		
-		try{
+
+		try {
 			str = new String(rawImage, "UTF-8");
-		}catch(Exception ex){
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
-		
-		start = 0;
-		remaining_data= str.length();
-		
-		if(str.length() > Constants.IMAGE_DATA_SIZE.getValue()){
-			end = Constants.IMAGE_DATA_SIZE.getValue();
-		}else{
-			end = str.length();
-			last_message = true;
-		}
-		
-//		System.out.println(str);
-		
-//		System.out.println("disque llega la imagen");
-		
-		//Process images to split and send multiple messages
-		do{
-			partialImage = str.substring(start, end);
-//			partialImage = Arrays.copyOfRange(rawImage, start, end);
-//			partialImage.toString();
-//			System.out.println(partialImage);
-			
-			streamMsg = new Stream(last_message,partialImage);
-			try{
-				client.getOutput().writeUTF(streamMsg.ToJSON());
-			}catch(IOException ex){
-				ex.printStackTrace();
-			}
-//			System.out.println(streamMsg.ToJSON());
-			
-			start = end;
-			remaining_data -= Constants.IMAGE_DATA_SIZE.getValue();
-			if(remaining_data<=0) break;		//no more data
-			
-			if(remaining_data<=Constants.IMAGE_DATA_SIZE.getValue()){
-				end += remaining_data;
-				last_message = true;
-				
-			}else{
-				end += Constants.IMAGE_DATA_SIZE.getValue();
-			}
 
-		}while(remaining_data>0);
-		
+		streamMsg = new Stream(false, str);
+		client.getOut().println(streamMsg.ToJSON());
 	}
 
 }

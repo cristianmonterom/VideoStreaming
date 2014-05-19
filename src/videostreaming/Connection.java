@@ -1,9 +1,10 @@
 package videostreaming;
+import java.io.BufferedReader;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -16,19 +17,21 @@ public abstract class Connection {
     protected DataInputStream input;
     protected OutputStream outputStream;
     protected InputStream inputStream;
-//    private int port;
+
+    protected PrintWriter out;
+    protected BufferedReader in;
     
     
     private String hostname="";
     
     public abstract void establishConnection();
 
-	public DataOutputStream getOutput() {
-		return output;
+	public PrintWriter getOut() {
+		return out;
 	}
 
-	public DataInputStream getInput() {
-		return input;
+	public BufferedReader getIn() {
+		return in;
 	}
-
+	
 }

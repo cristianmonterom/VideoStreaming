@@ -6,11 +6,11 @@ package videostreaming;
 //verch
 // 2nd commit santiago
 
-import org.kohsuke.args4j.Argument;
 import org.kohsuke.args4j.CmdLineException;
 import org.kohsuke.args4j.CmdLineParser;
 import org.kohsuke.args4j.Option;
-import videostreaming.common.*;
+
+import videostreaming.common.Constants;
 
 
 public class ArgumentParser {

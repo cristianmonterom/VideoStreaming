@@ -1,12 +1,11 @@
 package videostreaming;
 
-import java.io.UnsupportedEncodingException;
-
 import javax.swing.JFrame;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bridj.Pointer;
 
+import videostreaming.common.Constants;
 
 import com.github.sarxos.webcam.ds.buildin.natives.Device;
 import com.github.sarxos.webcam.ds.buildin.natives.DeviceList;
@@ -18,13 +17,17 @@ public class VideoCapture implements Runnable {
 	static OpenIMAJGrabber grabber = new OpenIMAJGrabber();
 	CurrentImage img;
 
-	public VideoCapture(CurrentImage image) {
+	public VideoCapture(CurrentImage image, String title) {
 		img = image;
-		
-		frame.setSize(320, 240);
+
+		frame.setSize(Constants.WINDOW_WIDTH.getValue(),
+				Constants.WINDOW_HEIGHT.getValue());
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.add(myViewer);
+		frame.setLocationRelativeTo(null);
+		frame.setResizable(false);
+		frame.setTitle(title);
 
 		grabber = new OpenIMAJGrabber();
 
@@ -42,9 +45,7 @@ public class VideoCapture implements Runnable {
 		}
 	}
 
-	public VideoCapture(JFrame _frame, Viewer _myViewer) {
-		this.frame = _frame;
-		this.myViewer = _myViewer;
+	public VideoCapture() {
 	}
 
 	@Override
@@ -56,35 +57,18 @@ public class VideoCapture implements Runnable {
 			byte[] compressed_image = Compressor.compress(raw_image);
 			/* Prepare the date to be sent in a text friendly format. */
 			byte[] base64_image = Base64.encodeBase64(compressed_image);
-			
-			
+
 			img.setImageToDisplay(base64_image.clone());
-			
-			String str = null;
-			try {
-				str = new String(img.getImageToDisplay(), "UTF-8");
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-//			System.err.println(str);
 
 			myViewer.ViewerInput(raw_image);
 			frame.repaint();
-			
-			
+
 			try {
-				Thread.sleep(1000);
-				System.err.println("durmiendo");
+				Thread.sleep(Constants.TIME_CAPTURE.getValue());
 			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			//thread = new Thread(this, threadname);
-//			System.out.println("New thread: ");
-//			thread.sleep(100);
 		}
 	}
-
 
 }

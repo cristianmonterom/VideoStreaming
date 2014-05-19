@@ -1,45 +1,34 @@
 package videostreaming;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.net.ServerSocket;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
 
 import videostreaming.common.Constants;
 
-
 public class ClientConnection extends Connection {
-	
-	String hostname="";
-	
-	
-	 public ClientConnection(String host)
-	 {
-	    	this.hostname = host;
-	    	System.out.println("ejecuta constructor");
-	 }
 
+	String hostname = "";
 
-//	@Override
-//	public void establishConnection() {
-//		// TODO Auto-generated method stub
-//		
-//	}
-//	 
-	 
+	public ClientConnection(String host) {
+		this.hostname = host;
+		System.out.println("ejecuta constructor");
+	}
+
 	@Override
-	 public void establishConnection()
-	 {
-		 try{
-			 socket = new Socket(this.hostname,Constants.PORT.getValue());
-			 inputStream = socket.getInputStream();
-			 outputStream = socket.getOutputStream();
-			 input = new DataInputStream(inputStream);
-			 output = new DataOutputStream(outputStream);
-		 }catch(IOException ex){
-			 ex.printStackTrace();
-		 }
-		
-	 } 
+	public void establishConnection() {
+		try {
+			socket = new Socket(this.hostname, Constants.PORT.getValue());
+			inputStream = socket.getInputStream();
+			outputStream = socket.getOutputStream();
+			out = new PrintWriter(outputStream, true);
+			in = new BufferedReader(new InputStreamReader(inputStream));
+
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		}
+
+	}
 }
