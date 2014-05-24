@@ -1,21 +1,39 @@
 package videostreaming;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import videostreaming.messaging.StartStreamRequest;
+import videostreaming.messaging.StartStreamResponse;
 import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.StopStreamResponse;
 import videostreaming.messaging.Stream;
 
 public class ClientThread implements Runnable {
 	Client client;
 	StatusResponse response;
+	StartStreamResponse startStreamResponse = new StartStreamResponse();
+	StopStreamResponse stopStreamResponse = new StopStreamResponse();
+	Thread stopStreamThread;
+	StopStreamCapture stopStreamCapture;
+	private boolean running;
+	private PrintWriter out;
+	private BufferedReader in;
 
-	public ClientThread(Client client, StatusResponse status) {
+	public ClientThread(Client client, StatusResponse status,
+			BufferedReader dIS, PrintWriter dOS) {
+		this.out = dOS;
+		this.in = dIS;
 		this.client = client;
 		this.response = status;
+		this.running = true;
+		stopStreamCapture = new StopStreamCapture(this.in, this.out);
+		stopStreamThread = new Thread(stopStreamCapture);
 	}
 
 	public void run() {
+		stopStreamThread.start();
 		sendStatusResponse();
 		receiveRequest();
 		try {
@@ -48,6 +66,21 @@ public class ClientThread implements Runnable {
 		}
 
 		resquestRcvd.FromJSON(rcvdReqStr);
+
+		sendStartStreamResponse();
+		// aafasdfa
+	}
+
+	private void sendStartStreamResponse() {
+		String str = startStreamResponse.ToJSON();
+		client.getOut().println(str);
+		System.err.println("start stream RESPONSE SENT" + str);
+	}
+
+	private void sendStopStreamResponse() {
+		String str = stopStreamResponse.ToJSON();
+		client.getOut().println(str);
+		System.err.println("start stream RESPONSE SENT" + str);
 	}
 
 	private void sendImage() {
@@ -66,6 +99,10 @@ public class ClientThread implements Runnable {
 
 		streamMsg = new Stream(false, str);
 		client.getOut().println(streamMsg.ToJSON());
+	}
+
+	public boolean isRunning() {
+		return running;
 	}
 
 }

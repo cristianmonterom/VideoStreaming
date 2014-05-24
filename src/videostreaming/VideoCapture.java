@@ -28,7 +28,8 @@ public class VideoCapture implements Runnable {
 		frame.setLocationRelativeTo(null);
 		frame.setResizable(false);
 		frame.setTitle(title);
-
+//		frame.addKeyListener((KeyListener) new MyDispatcher());
+//frame.setFocusable(true);
 		grabber = new OpenIMAJGrabber();
 
 		Device device = null;

@@ -19,26 +19,33 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		ServerConnection connAsServer = new ServerConnection(); // act as server
 		CurrentImage currentImage = new CurrentImage();
 
 		/**
 		 * parsing arguments
 		 */
 		setArgumentsFromCommandLine(args);
+		ServerConnection connAsServer = new ServerConnection(getServerPort()); // act
+																				// as
+																				// server
 
-		if (local == false) // if streaming == remote then connect to a server
+		if (!local) // if streaming == remote then connect to a server
 		{
-			ClientConnection connAsClient = new ClientConnection(hostname);
+			ClientConnection connAsClient = new ClientConnection(hostname,
+					getRemotePort());
 			System.err.println("no se si llega aqui");
 			connAsClient.establishConnection();
 			Thread test = new Thread(new ImageCaptureThread(
 					connAsClient.getIn(), connAsClient.getOut()));
-			test.run();
+			test.start();
+//			Thread keyboardCapture = new Thread(new KeyboardCapture(
+//					connAsClient.getIn(), connAsClient.getOut()));
+//			keyboardCapture.start();
 
 		} else {
 			Thread video = new Thread(new VideoCapture(currentImage, "Server"));
 			video.start();
+
 		}
 
 		/**
@@ -57,7 +64,8 @@ public class Main {
 				StatusResponse statusMsgResp = new StatusResponse(local,
 						clientList.size(), ratelimit, handover);
 				Thread client = new Thread(new ClientThread(aNewClient,
-						statusMsgResp));
+						statusMsgResp, connAsServer.getIn(),
+						connAsServer.getOut()));
 				client.start();
 
 				System.out.println("cuantos=" + clientList.size());
@@ -69,9 +77,7 @@ public class Main {
 				connAsServer.getOut().write(statusMsgResp.ToJSON());
 				System.err.println("From Server" + statusMsgResp.ToJSON());
 			}
-
 		}
-
 	}
 
 	private static void setArgumentsFromCommandLine(String[] args) {
@@ -91,6 +97,14 @@ public class Main {
 		System.out.println("serverPort=" + serverPort);
 		System.out.println("remoteport=" + remotePort);
 		System.out.println("rate=" + rate);
+	}
+
+	public static int getServerPort() {
+		return serverPort;
+	}
+
+	public static int getRemotePort() {
+		return remotePort;
 	}
 
 }

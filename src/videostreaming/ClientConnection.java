@@ -11,16 +11,23 @@ import videostreaming.common.Constants;
 public class ClientConnection extends Connection {
 
 	String hostname = "";
-
+	int port = 0;
 	public ClientConnection(String host) {
 		this.hostname = host;
+		System.out.println("ejecuta constructor");
+	}
+
+	public ClientConnection(String host, int _port) {
+		this.hostname = host;
+		this.port = _port;
 		System.out.println("ejecuta constructor");
 	}
 
 	@Override
 	public void establishConnection() {
 		try {
-			socket = new Socket(this.hostname, Constants.PORT.getValue());
+			socket = new Socket(this.hostname, this.port);
+//			socket = new Socket(this.hostname, Constants.PORT.getValue());
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
 			out = new PrintWriter(outputStream, true);

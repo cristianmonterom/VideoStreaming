@@ -7,6 +7,7 @@ import videostreaming.common.ProtocolMessages;
 public class Stream extends RequestResponse {
 	String imageData;
 	boolean lastMessage = true;
+	boolean correctMessage = true;
 
 	public Stream(boolean _lastMessage, String strDataToSend) {
 		this.lastMessage = _lastMessage;
@@ -47,13 +48,20 @@ public class Stream extends RequestResponse {
 		try {
 			obj = (JSONObject) parser.parse(_response);
 		} catch (org.json.simple.parser.ParseException e) {
-			System.err.println("StreamResponse: Message is not valid");
+			this.imageData = "";
+			this.correctMessage=false;
+//			System.err.println("Streame: Message is not valid");
 		}
 
 		try {
 			this.imageData = (String) obj.get("data");
+			if (this.imageData.isEmpty()){
+				this.correctMessage=false;
+			}
 		} catch (Exception e) {
-			System.err.println("StatusResponse: Message format is not valid");
+			this.imageData="";
+			this.correctMessage=false;
+//			System.err.println("Status: Message format is not valid");
 		}
 
 	}
@@ -62,4 +70,9 @@ public class Stream extends RequestResponse {
 		return imageData;
 	}
 
+	public boolean isCorrectMessage() {
+		return correctMessage;
+	}
+
+	
 }
