@@ -3,10 +3,14 @@
  */
 package videostreaming.messaging;
 
+import java.net.InetAddress;
+import java.util.ArrayList;
+
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import videostreaming.common.ProtocolMessages;
+import videostreaming.Client;;
 
 /**
  * @author Cristian
@@ -14,12 +18,14 @@ import videostreaming.common.ProtocolMessages;
  */
 public class OverloadResponse extends RequestResponse {
 
-	private String[] clients;
+//	private String[] clients;
 	private String server;
 	private int port;
+	private ArrayList<Client> allClients = new ArrayList<Client>();
 	
-	public OverloadResponse (String[] _clients, String _server, int _port) {
-		this.clients = _clients;
+	public OverloadResponse (ArrayList<Client> list, String _server, int _port) {
+		this.allClients = (ArrayList<Client>) list.clone();
+
 		this.server = _server;
 		this.port = _port;
 	}
@@ -36,21 +42,27 @@ public class OverloadResponse extends RequestResponse {
 	@SuppressWarnings("unchecked")
 	@Override
 	public String ToJSON() {
-		JSONArray clientList = new JSONArray();
-		for (int i = 0; i < this.clients.length; i++) {
-			clientList.add(this.clients[i]);
-		}
 		JSONObject obj = new JSONObject();
+		JSONArray clientList = new JSONArray();
+		
+		obj.put(Type(), ProtocolMessages.Overloaded.getValue());
+		
+		JSONObject client = new JSONObject();
+		for(Client currentClient : allClients){
+			client.put("ip", currentClient.getIpAddress());
+			client.put("port", currentClient.getServicePort());
+			clientList.add(client);
+		}
+		obj.put("clients", clientList);
+		
 		JSONObject objServer = new JSONObject();
 		objServer.put("ip", this.server);
 		objServer.put("port", this.port);
-		obj.put(Type(), ProtocolMessages.Overloaded.getValue());
-		obj.put("clients", clientList);
 		obj.put("server", objServer);
-
 		return obj.toJSONString();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void FromJSON(String _response) {
 		JSONObject obj = null;
@@ -61,7 +73,7 @@ public class OverloadResponse extends RequestResponse {
 		}
 		
 		try {
-			this.clients = (String[]) obj.get("clients");
+			this.allClients = (ArrayList<Client>) obj.get("clients");
 			this.port = (Integer.parseInt(obj.get("port").toString()));
 			this.server = (String) obj.get("server");
 		} catch (Exception e) {

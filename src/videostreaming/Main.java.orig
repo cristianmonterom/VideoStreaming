@@ -48,9 +48,13 @@ public class Main {
 			ClientConnection connAsClient;
 			connAsClient = new ClientConnection(hostname,getRemotePort());
 			socket = connAsClient.establishConnection();
+<<<<<<< HEAD
+			Thread test = new Thread(new ImageCaptureThread(socket, currentImage));
+=======
 			Thread test = new 
-			Thread(new ImageCaptureThread(socket, getServerPort(), currentImage));
+			Thread(new ImageCaptureThread(socket, getServerPort()));
 			
+>>>>>>> 8f258df9943cd3fbe72760914f1ac8b612552e70
 			test.start();
 		} else {
 			Thread video = new Thread(new VideoCapture(currentImage, "Server"));

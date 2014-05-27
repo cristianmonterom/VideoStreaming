@@ -1,17 +1,40 @@
-/**
- * 
- */
 package videostreaming.messaging;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
+import java.util.ArrayList;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 import videostreaming.common.ProtocolMessages;
+import videostreaming.Client;
 
 /**
  * @author Cristian
  *
  */
 public class StopStreamResponse extends RequestResponse{
+	
+	private ArrayList<Client> clientList = new ArrayList<Client>();
+	private String myIpAddress;
+	
+	public StopStreamResponse()
+	{
+		
+	}
+	
+	public StopStreamResponse(ArrayList<Client> list)
+	{
+		this.clientList = list;
+		
+		try {
+			this.myIpAddress = InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			e.printStackTrace();
+		}
+		
+	}
 
 	@Override
 	String Type() {
@@ -28,7 +51,6 @@ public class StopStreamResponse extends RequestResponse{
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
 		obj.put(Type(), ProtocolMessages.StoppedStream.getValue());
-
 		return obj.toJSONString();
 	}
 

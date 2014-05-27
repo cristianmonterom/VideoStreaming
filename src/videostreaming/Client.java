@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.net.InetAddress;
 import java.net.Socket;
 
 public class Client {
@@ -15,6 +16,8 @@ public class Client {
 	private BufferedReader in;
 	private OutputStream outputStream;
 	private InputStream inputStream;
+	private int servicePort;
+	private String ipAddress;
 
 
 	public Client(Socket socket, CurrentImage image) {
@@ -30,6 +33,8 @@ public class Client {
 		in = new BufferedReader(new InputStreamReader(inputStream));
 
 		this.image = image;
+		
+		ipAddress = socket.getInetAddress().toString();
 	}
 
 	public CurrentImage getImage() {
@@ -44,6 +49,16 @@ public class Client {
 		return in;
 	}
 
+	public int getServicePort() {
+		return servicePort;
+	}
 
+	public void setServicePort(int servicePort) {
+		this.servicePort = servicePort;
+	}
+
+	public String getIpAddress() {
+		return ipAddress;
+	}
 
 }

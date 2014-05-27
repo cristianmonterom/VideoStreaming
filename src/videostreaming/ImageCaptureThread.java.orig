@@ -40,10 +40,14 @@ public class ImageCaptureThread implements Runnable {
 	private OutputStream outputStream;
 	private InputStream inputStream;
 	
-	public ImageCaptureThread(Socket socket, int servicePort, CurrentImage image) {
+<<<<<<< HEAD
+	public ImageCaptureThread(Socket socket, CurrentImage image) {
+=======
+	public ImageCaptureThread(Socket socket, int servicePort) {
 		
 		this.servicePort = servicePort;
 		
+>>>>>>> 8f258df9943cd3fbe72760914f1ac8b612552e70
 		try{
 			img = image;
 			inputStream = socket.getInputStream();
