@@ -18,13 +18,9 @@ public class Main {
 	private static int serverPort;
 	private static int remotePort;
 	private static int rate;
-
 	private static boolean local;
 	private static boolean ratelimit;
 	
-	
-	
-//	static ArrayList<Client> pruebas = new ArrayList<Client>();	//erase it only for tests
 	
 	/**
 	 * This is the main for video streaming project
@@ -47,7 +43,7 @@ public class Main {
 			connAsClient = new ClientConnection(hostname,getRemotePort());
 			socket = connAsClient.establishConnection();
 			Thread test = new 
-			Thread(new ImageCaptureThread(socket, getServerPort(), currentImage));
+			Thread(new ImageCaptureThread(socket, getServerPort(),currentImage));
 			
 			test.start();
 		} else {
@@ -88,7 +84,10 @@ public class Main {
 				
 				OverloadResponse overLoadResp = null;
 				overLoadResp = new 
-				OverloadResponse(clientList, socket.getLocalAddress().toString().replace("/", ""), serverPort);
+				OverloadResponse(		
+				clientList, 
+				socket.getLocalAddress().toString().replace("/", ""),
+				serverPort );
 				
 				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
 					handover = true;
