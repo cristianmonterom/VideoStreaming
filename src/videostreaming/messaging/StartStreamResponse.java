@@ -16,6 +16,7 @@ public class StartStreamResponse extends RequestResponse {
 		return ProtocolMessages.StartingStream.getValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();

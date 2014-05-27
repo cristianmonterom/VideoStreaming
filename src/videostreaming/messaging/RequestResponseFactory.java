@@ -1,7 +1,6 @@
 package videostreaming.messaging;
-import videostreaming.common.ProtocolMessages;
-import videostreaming.messaging.*;
 
+import videostreaming.common.ProtocolMessages;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;

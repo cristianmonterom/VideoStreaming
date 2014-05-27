@@ -3,7 +3,6 @@
  */
 package videostreaming.messaging;
 
-import java.net.InetAddress;
 import java.util.ArrayList;
 
 import org.json.simple.JSONArray;
@@ -17,12 +16,11 @@ import videostreaming.Client;;
  *
  */
 public class OverloadResponse extends RequestResponse {
-
-//	private String[] clients;
 	private String server;
 	private int port;
 	private ArrayList<Client> allClients = new ArrayList<Client>();
 	
+	@SuppressWarnings("unchecked")
 	public OverloadResponse (ArrayList<Client> list, String _server, int _port) {
 		this.allClients = (ArrayList<Client>) list.clone();
 

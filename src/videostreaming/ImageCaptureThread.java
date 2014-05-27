@@ -43,9 +43,9 @@ public class ImageCaptureThread implements Runnable {
 	public ImageCaptureThread(Socket socket, int servicePort, CurrentImage image) {
 		
 		this.servicePort = servicePort;
-		
+		this.img = image;
 		try{
-			img = image;
+			
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
 		} catch (IOException ex) {
@@ -175,6 +175,8 @@ public class ImageCaptureThread implements Runnable {
 				renderView(streamMsgFromServer.getImageData());
 //				img.setImageToDisplay(base64_image.clone());
 				img.setImageToDisplay(streamMsgFromServer.getImageData().getBytes("UTF-8"));
+//				System.out.println("new image appended");
+//				System.out.println(streamMsgFromServer.getImageData());
 //				out.println(streamMsgFromServer.ToJSON());
 			} else {
 				StopStreamResponse stopStreamResp = new StopStreamResponse();
