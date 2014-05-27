@@ -2,30 +2,22 @@ package videostreaming;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import videostreaming.messaging.StopStreamRequest;
-import videostreaming.messaging.StopStreamResponse;
 
 public class StopStreamCapture implements Runnable {
-	private PrintWriter out;
 	private BufferedReader in;
-	private boolean running = true;
+	private boolean isRequestedToStop = false;
 
-	public StopStreamCapture(BufferedReader dIS, PrintWriter dOS) {
-		this.out = dOS;
+	public StopStreamCapture(BufferedReader dIS) {
 		this.in = dIS;
-		this.running = true;
+		this.isRequestedToStop = false;
 	}
 
 	@Override
 	public void run() {
-		receiveStopStreamRequest();
-		try {
-
-			sendStopStreamResponse();
-		} catch (IOException e) {
-			e.printStackTrace();
+		while (!this.isRequestedToStop) {
+			receiveStopStreamRequest();
 		}
 	}
 
@@ -38,21 +30,13 @@ public class StopStreamCapture implements Runnable {
 			ioEx.printStackTrace();
 		}
 
-		System.err.println(strFromServer);
 		stopStreamRequest = new StopStreamRequest();
 		stopStreamRequest.FromJSON(strFromServer);
+		this.isRequestedToStop = true;
 	}
 
-	private void sendStopStreamResponse() throws IOException {
-		StopStreamResponse response = new StopStreamResponse();
-		// request = new StopStreamRequest();
-		out.println(response.ToJSON());
-		System.err.println("StopStreamResponse: " + response.ToJSON());
-		this.running = false;
-	}
-
-	public boolean isRunning() {
-		return running;
+	public boolean isRequestedToStop() {
+		return isRequestedToStop;
 	}
 
 }

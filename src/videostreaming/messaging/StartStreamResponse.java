@@ -19,8 +19,8 @@ public class StartStreamResponse extends RequestResponse {
 	@Override
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
-		obj.put("response", ProtocolMessages.StartingStream.getValue());
-		return obj.toJSONString() + endMessage;
+		obj.put(Type(), ProtocolMessages.StartingStream.getValue());
+		return obj.toJSONString();
 	}
 
 	@Override

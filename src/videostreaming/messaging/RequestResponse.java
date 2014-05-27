@@ -8,8 +8,6 @@ public abstract class RequestResponse {
 	
 	abstract String Type();
 	abstract String Action();
-	
-	public final String endMessage="\n";
 	public abstract String ToJSON();
 
 	public abstract void FromJSON(String _response);

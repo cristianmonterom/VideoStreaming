@@ -1,8 +1,10 @@
 package videostreaming;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.PrintWriter;
+//import java.io.PrintWriter;
+
+
+import java.util.ArrayList;
 
 import videostreaming.messaging.StartStreamRequest;
 import videostreaming.messaging.StartStreamResponse;
@@ -10,32 +12,33 @@ import videostreaming.messaging.StatusResponse;
 import videostreaming.messaging.StopStreamResponse;
 import videostreaming.messaging.Stream;
 
+
+/**
+ * 
+ * @author santiago
+ *
+ */
 public class ClientThread implements Runnable {
 	Client client;
 	StatusResponse response;
-	StartStreamResponse startStreamResponse = new StartStreamResponse();
-	StopStreamResponse stopStreamResponse = new StopStreamResponse();
 	Thread stopStreamThread;
 	StopStreamCapture stopStreamCapture;
-	private boolean running;
-	private PrintWriter out;
-	private BufferedReader in;
+	private ArrayList<Client> clientListRef = new ArrayList<Client>();
+	
 
-	public ClientThread(Client client, StatusResponse status,
-			BufferedReader dIS, PrintWriter dOS) {
-		this.out = dOS;
-		this.in = dIS;
+	public ClientThread(Client client, StatusResponse status, ArrayList<Client> clientList){
 		this.client = client;
 		this.response = status;
-		this.running = true;
-		stopStreamCapture = new StopStreamCapture(this.in, this.out);
+		stopStreamCapture = new StopStreamCapture(client.getIn());
 		stopStreamThread = new Thread(stopStreamCapture);
+		clientListRef = clientList;
 	}
 
 	public void run() {
-		stopStreamThread.start();
+
 		sendStatusResponse();
-		receiveRequest();
+		receiveStartStreamRequest();
+		sendStartStreamResponse();
 		try {
 			Thread.sleep(800);
 		} catch (InterruptedException ex) {
@@ -43,19 +46,27 @@ public class ClientThread implements Runnable {
 		}
 
 		// While condition execute following
+		stopStreamThread.start();
 		do {
 			sendImage();
-		} while (true);
+		} while (stopStreamCapture.isRequestedToStop() == false);
+		
+		sendStopStreamResponse();
+			
+//		System.out.println("si se borra? =>index actual:"+clientListRef.indexOf(this.client)+"el string: "+this.client.toString()+"_source:"+Thread.currentThread().getStackTrace()[1].getFileName());
+		clientListRef.remove(this.client);
+		
+		System.out.println("HERE THE CONNECTION MUST BE CLOSED _SOURCE:"+Thread.currentThread().getStackTrace()[1].getFileName());
 
 	}
 
 	private void sendStatusResponse() {
 		String str = response.ToJSON();
 		client.getOut().println(str);
-		System.err.println("mensaje sttus response enviado ok" + str);
+		System.err.println("mensaje status response enviado ok" + str);
 	}
 
-	private void receiveRequest() {
+	private void receiveStartStreamRequest() {
 		StartStreamRequest resquestRcvd = new StartStreamRequest();
 		String rcvdReqStr = "";
 
@@ -66,23 +77,22 @@ public class ClientThread implements Runnable {
 		}
 
 		resquestRcvd.FromJSON(rcvdReqStr);
-
-		sendStartStreamResponse();
-		// aafasdfa
 	}
 
 	private void sendStartStreamResponse() {
+		StartStreamResponse startStreamResponse = new StartStreamResponse();
 		String str = startStreamResponse.ToJSON();
 		client.getOut().println(str);
-		System.err.println("start stream RESPONSE SENT" + str);
+//		System.err.println("start stream RESPONSE SENT" + str);
 	}
 
 	private void sendStopStreamResponse() {
+		StopStreamResponse stopStreamResponse = new StopStreamResponse();
 		String str = stopStreamResponse.ToJSON();
 		client.getOut().println(str);
-		System.err.println("start stream RESPONSE SENT" + str);
+//		System.err.println("SendInfo OK _from=> "+Thread.currentThread().getStackTrace()[1].getFileName()+":" + str);
 	}
-
+	
 	private void sendImage() {
 		byte[] rawImage;
 
@@ -97,12 +107,8 @@ public class ClientThread implements Runnable {
 			ex.printStackTrace();
 		}
 
-		streamMsg = new Stream(false, str);
+		streamMsg = new Stream(str);
 		client.getOut().println(streamMsg.ToJSON());
-	}
-
-	public boolean isRunning() {
-		return running;
 	}
 
 }

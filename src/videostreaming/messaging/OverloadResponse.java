@@ -48,7 +48,7 @@ public class OverloadResponse extends RequestResponse {
 		obj.put("clients", clientList);
 		obj.put("server", objServer);
 
-		return obj.toJSONString() + endMessage;
+		return obj.toJSONString();
 	}
 
 	@Override

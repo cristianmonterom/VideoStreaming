@@ -34,7 +34,7 @@ public class StartStreamRequest extends RequestResponse {
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
 		obj.put(Type(), ProtocolMessages.StartSream.getValue());
-		return obj.toJSONString() + endMessage;
+		return obj.toJSONString();
 	}
 
 	@Override

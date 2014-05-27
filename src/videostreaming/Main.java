@@ -1,6 +1,11 @@
 package videostreaming;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.ArrayList;
+
 
 import videostreaming.common.Constants;
 import videostreaming.messaging.StatusResponse;
@@ -16,65 +21,76 @@ public class Main {
 
 	private static boolean local;
 	private static boolean ratelimit;
-
+	
+	
+	
+	static ArrayList<Client> pruebas = new ArrayList<Client>();	//erase it only for tests
+	
+	/**
+	 * This is the main for video streaming project
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
 		CurrentImage currentImage = new CurrentImage();
+		Socket socket = new Socket();
 
 		/**
 		 * parsing arguments
 		 */
 		setArgumentsFromCommandLine(args);
-		ServerConnection connAsServer = new ServerConnection(getServerPort()); // act
-																				// as
-																				// server
+		ServerConnection connAsServer = new ServerConnection(getServerPort()); 
 
 		if (!local) // if streaming == remote then connect to a server
 		{
-			ClientConnection connAsClient = new ClientConnection(hostname,
-					getRemotePort());
-			System.err.println("no se si llega aqui");
-			connAsClient.establishConnection();
-			Thread test = new Thread(new ImageCaptureThread(
-					connAsClient.getIn(), connAsClient.getOut()));
+			ClientConnection connAsClient;
+			connAsClient = new ClientConnection(hostname,getRemotePort());
+			socket = connAsClient.establishConnection();
+			Thread test = new Thread(new ImageCaptureThread(socket));
 			test.start();
-//			Thread keyboardCapture = new Thread(new KeyboardCapture(
-//					connAsClient.getIn(), connAsClient.getOut()));
-//			keyboardCapture.start();
-
 		} else {
 			Thread video = new Thread(new VideoCapture(currentImage, "Server"));
 			video.start();
 
 		}
-
+		
+		
 		/**
 		 * in the next loop, the system acting as a server side must delete the
 		 * clients once it was disconnected
 		 */
 		boolean handover = false;
+		
 		while (true) {
-			connAsServer.establishConnection();
+			socket = connAsServer.establishConnection();
 			if (clientList.size() < Constants.MAX_CLIENTS.getValue()) {
-				Client aNewClient = new Client(connAsServer.getIn(),
-						connAsServer.getOut(), currentImage);
+				Client aNewClient = new Client(socket, currentImage);
 				clientList.add(aNewClient);
 				handover = clientList.size() > Constants.MAX_CLIENTS.getValue() ? true
 						: false;
 				StatusResponse statusMsgResp = new StatusResponse(local,
 						clientList.size(), ratelimit, handover);
-				Thread client = new Thread(new ClientThread(aNewClient,
-						statusMsgResp, connAsServer.getIn(),
-						connAsServer.getOut()));
+				Thread client = new Thread(new ClientThread(aNewClient, statusMsgResp, clientList));
 				client.start();
+				
+//				System.out.println("comprobando index del ob actual de:"+" _source:"+Thread.currentThread().getStackTrace()[1].getFileName()+clientList.indexOf(aNewClient));
 
 				System.out.println("cuantos=" + clientList.size());
 			} else {
+				OutputStream outputStream = null;
+				PrintWriter out;
 				handover = clientList.size() >= Constants.MAX_CLIENTS
 						.getValue() ? true : false;
 				StatusResponse statusMsgResp = new StatusResponse(local,
 						clientList.size(), ratelimit, handover);
-				connAsServer.getOut().write(statusMsgResp.ToJSON());
+				
+				try{
+					outputStream = socket.getOutputStream();
+				} catch (IOException ex) {
+					ex.printStackTrace();
+				}
+				out = new PrintWriter(outputStream, true);
+				out.println(statusMsgResp.ToJSON());
 				System.err.println("From Server" + statusMsgResp.ToJSON());
 			}
 		}

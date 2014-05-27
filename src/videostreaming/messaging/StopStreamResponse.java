@@ -15,7 +15,7 @@ public class StopStreamResponse extends RequestResponse{
 
 	@Override
 	String Type() {
-		return ProtocolMessages.Request.getValue();
+		return ProtocolMessages.Response.getValue();
 	}
 
 	@Override
@@ -27,9 +27,9 @@ public class StopStreamResponse extends RequestResponse{
 	@Override
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
-		obj.put("response", ProtocolMessages.StoppedStream.getValue());
+		obj.put(Type(), ProtocolMessages.StoppedStream.getValue());
 
-		return obj.toJSONString() + endMessage;
+		return obj.toJSONString();
 	}
 
 	@Override

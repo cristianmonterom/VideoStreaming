@@ -1,9 +1,6 @@
 package videostreaming;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
@@ -32,16 +29,14 @@ public class ServerConnection extends Connection {
 	}
 
 	@Override
-	public void establishConnection() {
+	public Socket establishConnection() {
 		try {
-			System.out.println("esperando conexion");
+			System.out.println("waiting for connectionn");
 			socket = server.accept();
-			inputStream = socket.getInputStream();
-			outputStream = socket.getOutputStream();
 		} catch (IOException ex) {
 			ex.printStackTrace();
 		}
-		out = new PrintWriter(outputStream, true);
-		in = new BufferedReader(new InputStreamReader(inputStream));
+		
+		return socket;
 	}
 }

@@ -3,22 +3,22 @@ package videostreaming.messaging;
 import org.json.simple.JSONObject;
 
 import videostreaming.common.CommonFunctions;
+import videostreaming.common.ProtocolMessages;
 
 public class StatusResponse extends RequestResponse {
 	private String streaming;
 	private int totalClients;
 	private String rateLimit;
 	private String handover;
-	private static String action = "status";
 
 	@Override
 	String Type() {
-		return "response";
+		return ProtocolMessages.Response.getValue();
 	}
 
 	@Override
 	String Action() {
-		return this.action;
+		return ProtocolMessages.Status.getValue();
 	}
 
 	public StatusResponse() {
@@ -37,7 +37,7 @@ public class StatusResponse extends RequestResponse {
 	@Override
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
-		obj.put(Type(), this.action);
+		obj.put(Type(), Action());
 		obj.put("streaming", this.streaming);
 		obj.put("clients", this.totalClients);
 		obj.put("ratelimiting", this.rateLimit);
