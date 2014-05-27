@@ -34,12 +34,14 @@ public class ImageCaptureThread implements Runnable {
 	KeyboardCapture keyboardCapture;
 	Viewer myViewer = null;
 	JFrame frame = null;
-	
+	CurrentImage img;
+
 	private OutputStream outputStream;
 	private InputStream inputStream;
 	
-	public ImageCaptureThread(Socket socket) {
+	public ImageCaptureThread(Socket socket, CurrentImage image) {
 		try{
+			img = image;
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
 		} catch (IOException ex) {
@@ -167,6 +169,7 @@ public class ImageCaptureThread implements Runnable {
 
 			if (streamMsgFromServer.isCorrectMessage()) {
 				renderView(streamMsgFromServer.getImageData());
+				out.println(streamMsgFromServer.ToJSON());
 			} else {
 				StopStreamResponse stopStreamResp = new StopStreamResponse();
 				stopStreamResp.FromJSON(streamStr);
