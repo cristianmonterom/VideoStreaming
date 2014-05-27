@@ -13,10 +13,13 @@ import videostreaming.common.ProtocolMessages;
  */
 public class StartStreamRequest extends RequestResponse {
 
-	/**
-	 * 
-	 */
-	public StartStreamRequest() {
+	private int servicePortInfo;
+	
+	public StartStreamRequest(){}
+	
+	public StartStreamRequest(int servicePort) {
+		this.servicePortInfo = servicePort;
+		
 	}
 
 	@Override
@@ -34,6 +37,7 @@ public class StartStreamRequest extends RequestResponse {
 	public String ToJSON() {
 		JSONObject obj = new JSONObject();
 		obj.put(Type(), ProtocolMessages.StartSream.getValue());
+		obj.put("sport", this.servicePortInfo);
 		return obj.toJSONString();
 	}
 
@@ -44,7 +48,12 @@ public class StartStreamRequest extends RequestResponse {
 			obj = (JSONObject) parser.parse(_response);
 		} catch (org.json.simple.parser.ParseException e) {
 			System.err.println("StartStreamRequest: Message is not valid");
-		}		
+		}
+		
+		this.servicePortInfo = (Integer.parseInt(obj.get("sport").toString()));
 	}
 
+	public int getServicePortInfo() {
+		return servicePortInfo;
+	}
 }

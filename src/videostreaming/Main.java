@@ -7,7 +7,9 @@ import java.net.Socket;
 import java.util.ArrayList;
 
 
+
 import videostreaming.common.Constants;
+import videostreaming.messaging.OverloadResponse;
 import videostreaming.messaging.StatusResponse;
 
 public class Main {
@@ -24,7 +26,7 @@ public class Main {
 	
 	
 	
-	static ArrayList<Client> pruebas = new ArrayList<Client>();	//erase it only for tests
+//	static ArrayList<Client> pruebas = new ArrayList<Client>();	//erase it only for tests
 	
 	/**
 	 * This is the main for video streaming project
@@ -46,7 +48,9 @@ public class Main {
 			ClientConnection connAsClient;
 			connAsClient = new ClientConnection(hostname,getRemotePort());
 			socket = connAsClient.establishConnection();
-			Thread test = new Thread(new ImageCaptureThread(socket));
+			Thread test = new 
+			Thread(new ImageCaptureThread(socket, getServerPort()));
+			
 			test.start();
 		} else {
 			Thread video = new Thread(new VideoCapture(currentImage, "Server"));
@@ -60,29 +64,43 @@ public class Main {
 		 * clients once it was disconnected
 		 */
 		boolean handover = false;
+		StatusResponse statusMsgResp = null;
 		
 		while (true) {
 			socket = connAsServer.establishConnection();
 			if (clientList.size() < Constants.MAX_CLIENTS.getValue()) {
 				Client aNewClient = new Client(socket, currentImage);
 				clientList.add(aNewClient);
-				handover = clientList.size() > Constants.MAX_CLIENTS.getValue() ? true
-						: false;
-				StatusResponse statusMsgResp = new StatusResponse(local,
-						clientList.size(), ratelimit, handover);
-				Thread client = new Thread(new ClientThread(aNewClient, statusMsgResp, clientList));
+				
+				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
+					handover = true;
+				}else { handover = false; }
+
+				statusMsgResp = new
+				StatusResponse(local,clientList.size(), ratelimit, handover); //check disscusion board
+				
+				Thread client = new 
+				Thread(new ClientThread(aNewClient, statusMsgResp, clientList));
+				
 				client.start();
 				
 //				System.out.println("comprobando index del ob actual de:"+" _source:"+Thread.currentThread().getStackTrace()[1].getFileName()+clientList.indexOf(aNewClient));
 
-				System.out.println("cuantos=" + clientList.size());
+//				System.out.println("cuantos=" + clientList.size());
 			} else {
 				OutputStream outputStream = null;
 				PrintWriter out;
-				handover = clientList.size() >= Constants.MAX_CLIENTS
-						.getValue() ? true : false;
-				StatusResponse statusMsgResp = new StatusResponse(local,
-						clientList.size(), ratelimit, handover);
+				
+				OverloadResponse overLoadResp;
+				overLoadResp = new 
+				OverloadResponse(clientList, hostname, serverPort);
+				
+				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
+					handover = true;
+				}else { handover = false; }
+				
+//				statusMsgResp = new
+//				StatusResponse(local, clientList.size(), ratelimit, handover);			
 				
 				try{
 					outputStream = socket.getOutputStream();
@@ -90,8 +108,8 @@ public class Main {
 					ex.printStackTrace();
 				}
 				out = new PrintWriter(outputStream, true);
-				out.println(statusMsgResp.ToJSON());
-				System.err.println("From Server" + statusMsgResp.ToJSON());
+				out.println(overLoadResp.ToJSON());
+				System.err.println("From Server" + overLoadResp.ToJSON());
 			}
 		}
 	}

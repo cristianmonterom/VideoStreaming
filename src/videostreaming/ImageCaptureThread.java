@@ -29,6 +29,7 @@ public class ImageCaptureThread implements Runnable {
 
 	private PrintWriter out;
 	private BufferedReader in;
+	private int servicePort;
 	StartStreamResponse startStreamResponse;
 	Thread keyboardThread;
 	KeyboardCapture keyboardCapture;
@@ -38,7 +39,10 @@ public class ImageCaptureThread implements Runnable {
 	private OutputStream outputStream;
 	private InputStream inputStream;
 	
-	public ImageCaptureThread(Socket socket) {
+	public ImageCaptureThread(Socket socket, int servicePort) {
+		
+		this.servicePort = servicePort;
+		
 		try{
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
@@ -114,8 +118,7 @@ public class ImageCaptureThread implements Runnable {
 	}
 
 	private void sendStartStreamRequest() throws IOException {
-		StartStreamRequest request = new StartStreamRequest();
-
+		StartStreamRequest request = new StartStreamRequest(this.servicePort);
 		out.println(request.ToJSON());
 	}
 	

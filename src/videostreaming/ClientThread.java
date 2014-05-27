@@ -6,6 +6,7 @@ import java.io.IOException;
 
 import java.util.ArrayList;
 
+import sun.misc.Cleaner;
 import videostreaming.messaging.StartStreamRequest;
 import videostreaming.messaging.StartStreamResponse;
 import videostreaming.messaging.StatusResponse;
@@ -77,6 +78,8 @@ public class ClientThread implements Runnable {
 		}
 
 		resquestRcvd.FromJSON(rcvdReqStr);
+
+		includeServicePort(resquestRcvd.getServicePortInfo());
 	}
 
 	private void sendStartStreamResponse() {
@@ -110,5 +113,10 @@ public class ClientThread implements Runnable {
 		streamMsg = new Stream(str);
 		client.getOut().println(streamMsg.ToJSON());
 	}
-
+	
+	private void includeServicePort(int portToInclude)
+	{
+		this.client.setServicePort(portToInclude);
+	}
+	
 }
