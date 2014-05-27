@@ -169,10 +169,13 @@ public class ImageCaptureThread implements Runnable {
 		try {
 			streamMsgFromServer = new Stream();
 			streamMsgFromServer.FromJSON(streamStr);
+			streamMsgFromServer.getImageData();
 
 			if (streamMsgFromServer.isCorrectMessage()) {
 				renderView(streamMsgFromServer.getImageData());
-				out.println(streamMsgFromServer.ToJSON());
+//				img.setImageToDisplay(base64_image.clone());
+				img.setImageToDisplay(streamMsgFromServer.getImageData().getBytes("UTF-8"));
+//				out.println(streamMsgFromServer.ToJSON());
 			} else {
 				StopStreamResponse stopStreamResp = new StopStreamResponse();
 				stopStreamResp.FromJSON(streamStr);
