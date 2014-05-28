@@ -15,13 +15,11 @@ public class ClientConnection extends Connection {
 	int port = 0;
 	public ClientConnection(String host) {
 		this.hostname = host;
-		System.out.println("ejecuta constructor");
 	}
 
 	public ClientConnection(String host, int _port) {
 		this.hostname = host;
 		this.port = _port;
-		System.out.println("ejecuta constructor");
 	}
 
 	@Override

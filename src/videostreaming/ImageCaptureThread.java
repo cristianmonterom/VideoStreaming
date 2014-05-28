@@ -64,7 +64,7 @@ public class ImageCaptureThread implements Runnable {
 		
 //		System.err.println("Should receive msgs to init & start streaming "+" _source:"+Thread.currentThread().getStackTrace()[1].getFileName());
 		// read response message from server
-		receiveResponse();
+//		receiveResponse();
 		try {
 			sendStartStreamRequest();
 		} catch (IOException e) {
@@ -91,19 +91,19 @@ public class ImageCaptureThread implements Runnable {
 		
 	}
 
-	private void receiveResponse() {
-		String strFromServer = null;
-		RequestResponse rcvdRespFromServer;
-		try {
-			strFromServer = in.readLine();
-		} catch (IOException ioEx) {
-			ioEx.printStackTrace();
-		}
-
-		System.err.println(strFromServer);
-		rcvdRespFromServer = new StatusResponse();
-		rcvdRespFromServer.FromJSON(strFromServer);
-	}
+//	private void receiveResponse() {
+//		String strFromServer = null;
+//		RequestResponse rcvdRespFromServer;
+//		try {
+//			strFromServer = in.readLine();
+//		} catch (IOException ioEx) {
+//			ioEx.printStackTrace();
+//		}
+//
+//		System.err.println(strFromServer);
+//		rcvdRespFromServer = new StatusResponse();
+//		rcvdRespFromServer.FromJSON(strFromServer);
+//	}
 
 	private void receiveStartStreamResponse() {
 		String strFromServer = null;

@@ -18,6 +18,7 @@ public class Client {
 	private int servicePort;
 	private String ipAddress;
 
+	public Client(){}
 
 	public Client(Socket socket, CurrentImage image) {
 		
@@ -59,5 +60,10 @@ public class Client {
 	public String getIpAddress() {
 		return ipAddress;
 	}
+	
+	public void setIpAddress(String ipAddress) {
+		this.ipAddress = ipAddress;
+	}
+
 
 }

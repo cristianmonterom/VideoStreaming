@@ -1,6 +1,9 @@
 package videostreaming;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.net.Socket;
@@ -8,7 +11,9 @@ import java.util.ArrayList;
 
 import videostreaming.common.Constants;
 import videostreaming.messaging.OverloadResponse;
+import videostreaming.messaging.RequestResponse;
 import videostreaming.messaging.StatusResponse;
+import videostreaming.messaging.RequestResponseFactory;
 
 public class Main {
 	static ArrayList<Client> clientList = new ArrayList<Client>();
@@ -42,6 +47,7 @@ public class Main {
 			ClientConnection connAsClient;
 			connAsClient = new ClientConnection(hostname,getRemotePort());
 			socket = connAsClient.establishConnection();
+			socket = notOverloadedReceived(socket);		
 			Thread test = new 
 			Thread(new ImageCaptureThread(socket, getServerPort(),currentImage));
 			
@@ -52,24 +58,23 @@ public class Main {
 
 		}
 		
-		
 		/**
 		 * in the next loop, the system acting as a server side must delete the
 		 * clients once it was disconnected
 		 */
-		boolean handover = false;
+		boolean handover = true;
 		StatusResponse statusMsgResp = null;
 		
 		while (true) {
 			socket = connAsServer.establishConnection();
-			System.out.println("alguien se conecto");
+
 			if (clientList.size() < Constants.MAX_CLIENTS.getValue()) {
 				Client aNewClient = new Client(socket, currentImage);
 				clientList.add(aNewClient);
 				
-				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
-					handover = true;
-				}else { handover = false; }
+//				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
+//					handover = true;
+//				}else { handover = false; }
 
 				statusMsgResp = new
 				StatusResponse(local,clientList.size()-1, ratelimit, handover); 
@@ -83,15 +88,14 @@ public class Main {
 				PrintWriter out;
 				
 				OverloadResponse overLoadResp = null;
-				overLoadResp = new 
-				OverloadResponse(		
-				clientList, 
-				socket.getLocalAddress().toString().replace("/", ""),
-				serverPort );
 				
-				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
-					handover = true;
-				}else { handover = false; }
+				String ipOfServer = null;
+				if(!hostname.equals("")){
+					ipOfServer = hostname;
+				}
+				
+				overLoadResp = 
+				new OverloadResponse(clientList, ipOfServer, remotePort );
 				
 				try{
 					outputStream = socket.getOutputStream();
@@ -103,7 +107,62 @@ public class Main {
 			}
 		}
 	}
-
+	
+	private static Socket notOverloadedReceived(Socket connectionSocket)
+	{
+		Socket retSocket = null;
+		
+		retSocket = receiveResponse(connectionSocket);
+		
+		return retSocket;
+	}
+	
+	private static Socket receiveResponse( Socket initialSocket ) {
+		String strFromServer = null;
+		RequestResponse rcvdRespFromServer;
+		RequestResponseFactory helperOverloadMsg = new RequestResponseFactory();
+		String newIpAddr=null;
+		int newPort;
+		ClientConnection connAsClient = null;
+		InputStream inputStream = null;
+		BufferedReader in;
+		
+		do{
+		
+			try {
+				inputStream = initialSocket.getInputStream();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			
+			in = new BufferedReader(new InputStreamReader(inputStream));
+			
+			try {
+				strFromServer = in.readLine();
+			} catch (IOException ioEx) {
+				ioEx.printStackTrace();
+			}
+	
+			System.err.println(strFromServer);
+			
+			rcvdRespFromServer = helperOverloadMsg.FromJSON(strFromServer);
+			if(rcvdRespFromServer!=null)
+			{
+				newIpAddr =((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getIpAddress();
+				newPort  = ((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getServicePort();
+				
+				System.err.println("reconnecting to: "+newIpAddr+" port:"+newPort);
+				connAsClient = new ClientConnection(newIpAddr,newPort);
+				initialSocket = connAsClient.establishConnection();
+			}
+		}while(rcvdRespFromServer!=null);
+		
+		
+		return initialSocket;
+//		rcvdRespFromServer = new StatusResponse();
+//		rcvdRespFromServer.FromJSON(strFromServer);
+	}
+	
 	private static void setArgumentsFromCommandLine(String[] args) {
 		ArgumentParser parser = new ArgumentParser();
 		parser.Parse(args);

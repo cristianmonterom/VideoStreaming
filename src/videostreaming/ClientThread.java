@@ -4,6 +4,7 @@ import java.io.IOException;
 
 
 import java.util.ArrayList;
+
 import videostreaming.messaging.StartStreamRequest;
 import videostreaming.messaging.StartStreamResponse;
 import videostreaming.messaging.StatusResponse;
@@ -37,21 +38,25 @@ public class ClientThread implements Runnable {
 		sendStatusResponse();
 		receiveStartStreamRequest();
 		sendStartStreamResponse();
-		try {
-			Thread.sleep(800);
-		} catch (InterruptedException ex) {
-			ex.printStackTrace();
-		}
+//		try {
+//			Thread.sleep(800);
+//		} catch (InterruptedException ex) {
+//			ex.printStackTrace();
+//		}
 
 		// While condition execute following
 		stopStreamThread.start();
 		do {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
 			sendImage();
 		} while (stopStreamCapture.isRequestedToStop() == false);
 		
 		sendStopStreamResponse();
 			
-//		System.out.println("si se borra? =>index actual:"+clientListRef.indexOf(this.client)+"el string: "+this.client.toString()+"_source:"+Thread.currentThread().getStackTrace()[1].getFileName());
 		clientListRef.remove(this.client);
 		
 		System.out.println("HERE THE CONNECTION MUST BE CLOSED _SOURCE:"+Thread.currentThread().getStackTrace()[1].getFileName());
@@ -61,7 +66,7 @@ public class ClientThread implements Runnable {
 	private void sendStatusResponse() {
 		String str = response.ToJSON();
 		client.getOut().println(str);
-		System.err.println("mensaje status response enviado ok" + str);
+//		System.err.println("mensaje status response enviado ok" + str);
 	}
 
 	private void receiveStartStreamRequest() {
@@ -83,14 +88,12 @@ public class ClientThread implements Runnable {
 		StartStreamResponse startStreamResponse = new StartStreamResponse();
 		String str = startStreamResponse.ToJSON();
 		client.getOut().println(str);
-//		System.err.println("start stream RESPONSE SENT" + str);
 	}
 
 	private void sendStopStreamResponse() {
 		StopStreamResponse stopStreamResponse = new StopStreamResponse();
 		String str = stopStreamResponse.ToJSON();
 		client.getOut().println(str);
-//		System.err.println("SendInfo OK _from=> "+Thread.currentThread().getStackTrace()[1].getFileName()+":" + str);
 	}
 	
 	private void sendImage() {
