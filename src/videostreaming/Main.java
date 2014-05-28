@@ -34,6 +34,8 @@ public class Main {
 	public static void main(String[] args) {
 
 		CurrentImage currentImage = new CurrentImage();
+		
+		@SuppressWarnings("resource")
 		Socket socket = new Socket();
 
 		/**
@@ -49,7 +51,7 @@ public class Main {
 			socket = connAsClient.establishConnection();
 			socket = notOverloadedReceived(socket);		
 			Thread test = new 
-			Thread(new ImageCaptureThread(socket, getServerPort(),currentImage));
+			Thread(new ImageCaptureThread(socket, getServerPort(),currentImage,rate));
 			
 			test.start();
 		} else {
@@ -71,10 +73,6 @@ public class Main {
 			if (clientList.size() < Constants.MAX_CLIENTS.getValue()) {
 				Client aNewClient = new Client(socket, currentImage);
 				clientList.add(aNewClient);
-				
-//				if( clientList.size() > Constants.MAX_CLIENTS.getValue() ){
-//					handover = true;
-//				}else { handover = false; }
 
 				statusMsgResp = new
 				StatusResponse(local,clientList.size()-1, ratelimit, handover); 
@@ -148,8 +146,10 @@ public class Main {
 			rcvdRespFromServer = helperOverloadMsg.FromJSON(strFromServer);
 			if(rcvdRespFromServer!=null)
 			{
-				newIpAddr =((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getIpAddress();
-				newPort  = ((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getServicePort();
+				newIpAddr =
+				((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getIpAddress();
+				newPort  = 
+				((OverloadResponse) rcvdRespFromServer).getAllClients().get(0).getServicePort();
 				
 				System.err.println("reconnecting to: "+newIpAddr+" port:"+newPort);
 				connAsClient = new ClientConnection(newIpAddr,newPort);
@@ -173,7 +173,8 @@ public class Main {
 		rate = parser.getRate();
 
 		local = !hostname.equals("") ? false : true;
-		ratelimit = rate > 100 ? true : false;
+//		ratelimit = rate > 100 ? true : false;
+		ratelimit = true;
 
 		System.out.println("Parameters:");
 		System.out.println("hostname=" + hostname);

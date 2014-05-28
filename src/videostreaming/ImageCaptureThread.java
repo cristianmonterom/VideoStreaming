@@ -39,8 +39,12 @@ public class ImageCaptureThread implements Runnable {
 
 	private OutputStream outputStream;
 	private InputStream inputStream;
+	private Socket socketRef;
+	private int rate;
 	
-	public ImageCaptureThread(Socket socket, int servicePort, CurrentImage image) {
+	public ImageCaptureThread(Socket socket, int servicePort, CurrentImage image, int ratelimit) {
+		rate = ratelimit;
+		socketRef = socket;
 		
 		this.servicePort = servicePort;
 		this.img = image;
@@ -62,15 +66,13 @@ public class ImageCaptureThread implements Runnable {
 	public void run() {
 		keyboardThread.start();
 		
-//		System.err.println("Should receive msgs to init & start streaming "+" _source:"+Thread.currentThread().getStackTrace()[1].getFileName());
-		// read response message from server
-//		receiveResponse();
 		try {
 			sendStartStreamRequest();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		receiveStartStreamResponse();
+		
 		do {
 			receiveImages();
 		} while (keyboardCapture.isRunning());
@@ -80,30 +82,18 @@ public class ImageCaptureThread implements Runnable {
 		receiveStopStreamResponse();
 		
 		//Don't close socket until all messages have been 'consumed properly til get StopSTreamed
-		System.out.println("HERE THE CONNECTION MUST BE CLOSED _SOURCE:"+Thread.currentThread().getStackTrace()[1].getFileName());
+		System.out.println("Connection closed!!!");
 		
-//		out.close();
-//		try{
-//		in.close();
-//		}catch(IOException ex){
-//			ex.printStackTrace();
-//		}
+		out.close();
+		try{
+			in.close();
+			socketRef.close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
 		
+		System.exit(-1);
 	}
-
-//	private void receiveResponse() {
-//		String strFromServer = null;
-//		RequestResponse rcvdRespFromServer;
-//		try {
-//			strFromServer = in.readLine();
-//		} catch (IOException ioEx) {
-//			ioEx.printStackTrace();
-//		}
-//
-//		System.err.println(strFromServer);
-//		rcvdRespFromServer = new StatusResponse();
-//		rcvdRespFromServer.FromJSON(strFromServer);
-//	}
 
 	private void receiveStartStreamResponse() {
 		String strFromServer = null;
@@ -120,8 +110,9 @@ public class ImageCaptureThread implements Runnable {
 	}
 
 	private void sendStartStreamRequest() throws IOException {
-		StartStreamRequest request = new StartStreamRequest(this.servicePort);
+		StartStreamRequest request = new StartStreamRequest(this.servicePort, this.rate);
 		out.println(request.ToJSON());
+		System.out.println("enciando"+request.ToJSON());
 	}
 	
 	private void sendStopStreamRequest(){

@@ -23,6 +23,7 @@ public class ClientThread implements Runnable {
 	Thread stopStreamThread;
 	StopStreamCapture stopStreamCapture;
 	private ArrayList<Client> clientListRef = new ArrayList<Client>();
+	private int rate;
 	
 
 	public ClientThread(Client client, StatusResponse status, ArrayList<Client> clientList){
@@ -44,11 +45,10 @@ public class ClientThread implements Runnable {
 //			ex.printStackTrace();
 //		}
 
-		// While condition execute following
 		stopStreamThread.start();
 		do {
 			try {
-				Thread.sleep(100);
+				Thread.sleep(getRate());
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
@@ -58,19 +58,24 @@ public class ClientThread implements Runnable {
 		sendStopStreamResponse();
 			
 		clientListRef.remove(this.client);
-		
-		System.out.println("HERE THE CONNECTION MUST BE CLOSED _SOURCE:"+Thread.currentThread().getStackTrace()[1].getFileName());
-
+				
+		System.out.println("Connection closed!!!");
+		client.getOut().close();
+		try{
+			client.getIn().close();
+			client.getSocketRef().close();
+		}catch(IOException ex){
+			ex.printStackTrace();
+		}
 	}
 
 	private void sendStatusResponse() {
 		String str = response.ToJSON();
 		client.getOut().println(str);
-//		System.err.println("mensaje status response enviado ok" + str);
 	}
 
 	private void receiveStartStreamRequest() {
-		StartStreamRequest resquestRcvd = new StartStreamRequest();
+		StartStreamRequest requestRcvd = new StartStreamRequest();
 		String rcvdReqStr = "";
 
 		try {
@@ -79,9 +84,15 @@ public class ClientThread implements Runnable {
 			ex.printStackTrace();
 		}
 
-		resquestRcvd.FromJSON(rcvdReqStr);
+		requestRcvd.FromJSON(rcvdReqStr);
 
-		includeServicePort(resquestRcvd.getServicePortInfo());
+		includeServicePort(requestRcvd.getServicePortInfo());
+		if(requestRcvd.getRate()<100){
+			setRate(100);
+		}else{
+			setRate(requestRcvd.getRate());
+		}
+		
 	}
 
 	private void sendStartStreamResponse() {
@@ -118,5 +129,12 @@ public class ClientThread implements Runnable {
 	{
 		this.client.setServicePort(portToInclude);
 	}
-	
+
+	public int getRate() {
+		return rate;
+	}
+
+	public void setRate(int rate) {
+		this.rate = rate;
+	}
 }

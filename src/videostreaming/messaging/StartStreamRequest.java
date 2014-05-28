@@ -14,12 +14,13 @@ import videostreaming.common.ProtocolMessages;
 public class StartStreamRequest extends RequestResponse {
 
 	private int servicePortInfo;
+	private int rate;
 	
 	public StartStreamRequest(){}
 	
-	public StartStreamRequest(int servicePort) {
+	public StartStreamRequest(int servicePort, int rateLimit) {
 		this.servicePortInfo = servicePort;
-		
+		this.rate = rateLimit;
 	}
 
 	@Override
@@ -38,6 +39,7 @@ public class StartStreamRequest extends RequestResponse {
 		JSONObject obj = new JSONObject();
 		obj.put(Type(), ProtocolMessages.StartSream.getValue());
 		obj.put("sport", this.servicePortInfo);
+		obj.put("ratelimit", this.rate);
 		return obj.toJSONString();
 	}
 
@@ -51,9 +53,14 @@ public class StartStreamRequest extends RequestResponse {
 		}
 		
 		this.servicePortInfo = (Integer.parseInt(obj.get("sport").toString()));
+		this.rate = Integer.parseInt(obj.get("ratelimit").toString());
 	}
 
 	public int getServicePortInfo() {
 		return servicePortInfo;
+	}
+
+	public int getRate() {
+		return rate;
 	}
 }

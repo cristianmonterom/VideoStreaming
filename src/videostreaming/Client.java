@@ -17,11 +17,12 @@ public class Client {
 	private InputStream inputStream;
 	private int servicePort;
 	private String ipAddress;
+	private Socket socketRef;
 
 	public Client(){}
 
 	public Client(Socket socket, CurrentImage image) {
-		
+		socketRef = socket;
 		try{
 			inputStream = socket.getInputStream();
 			outputStream = socket.getOutputStream();
@@ -65,5 +66,7 @@ public class Client {
 		this.ipAddress = ipAddress;
 	}
 
-
+	public Socket getSocketRef() {
+		return socketRef;
+	}
 }
