@@ -104,7 +104,6 @@ public class ImageCaptureThread implements Runnable {
 			ioEx.printStackTrace();
 		}
 
-		System.err.println(strFromServer);
 		startStreamResponse = new StartStreamResponse();
 		startStreamResponse.FromJSON(strFromServer);
 	}
@@ -112,14 +111,12 @@ public class ImageCaptureThread implements Runnable {
 	private void sendStartStreamRequest() throws IOException {
 		StartStreamRequest request = new StartStreamRequest(this.servicePort, this.rate);
 		out.println(request.ToJSON());
-//		System.out.println("enciando"+request.ToJSON());
 	}
 	
 	private void sendStopStreamRequest(){
 		StopStreamRequest stopStreamReq = new StopStreamRequest();
 		String str = stopStreamReq.ToJSON();
 		out.println(str);
-		System.err.println(str);
 	}
 	
 	private void receiveStopStreamResponse(){
@@ -164,11 +161,7 @@ public class ImageCaptureThread implements Runnable {
 
 			if (streamMsgFromServer.isCorrectMessage()) {
 				renderView(streamMsgFromServer.getImageData());
-//				img.setImageToDisplay(base64_image.clone());
 				img.setImageToDisplay(streamMsgFromServer.getImageData().getBytes("UTF-8"));
-//				System.out.println("new image appended");
-//				System.out.println(streamMsgFromServer.getImageData());
-//				out.println(streamMsgFromServer.ToJSON());
 			} else {
 				StopStreamResponse stopStreamResp = new StopStreamResponse();
 				stopStreamResp.FromJSON(streamStr);
