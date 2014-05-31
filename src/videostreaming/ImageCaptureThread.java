@@ -112,7 +112,7 @@ public class ImageCaptureThread implements Runnable {
 	private void sendStartStreamRequest() throws IOException {
 		StartStreamRequest request = new StartStreamRequest(this.servicePort, this.rate);
 		out.println(request.ToJSON());
-		System.out.println("enciando"+request.ToJSON());
+//		System.out.println("enciando"+request.ToJSON());
 	}
 	
 	private void sendStopStreamRequest(){
